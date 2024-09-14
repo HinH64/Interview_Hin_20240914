@@ -1,10 +1,20 @@
 package models
 
 import (
+	"time"
+
+	"Interview_Hin_20240914/enums"
+
+	"errors"
+
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
+var statusRule = []validation.Rule{
+	validation.Required,
+	validation.In(enums.RoomStatusAvailable, enums.RoomStatusUnavailable, enums.RoomStatusMaintenance).Error("invalid status"),
+}
 type LevelRequest struct {
 	Name   string `json:"name"`
 }
@@ -25,4 +35,42 @@ func (p PlayerRequest) Validate() error {
 		validation.Field(&p.Name, validation.Required),
 		validation.Field(&p.LevelID, validation.Required, is.MongoID),
 	)
+}
+
+type RoomRequest struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Status      enums.RoomStatus  `json:"status"`
+}
+
+func (r RoomRequest) Validate() error {
+	return validation.ValidateStruct(&r,
+		validation.Field(&r.Name, validation.Required),
+		validation.Field(&r.Status, statusRule...),
+	)
+}
+
+type ReservationRequest struct {
+	RoomID           string    `json:"roomId"`
+	PlayerIDs        []string  `json:"playerIds"`
+	BookingDatetime  string    `json:"bookingDatetime"`
+}
+
+func (r ReservationRequest) Validate() error {
+	err := validation.ValidateStruct(&r,
+		validation.Field(&r.RoomID, validation.Required, is.MongoID),
+		validation.Field(&r.PlayerIDs, validation.Required, validation.Each(is.MongoID)),
+		validation.Field(&r.BookingDatetime, validation.Required, validation.Date("2006/01/02 15:04")),
+	)
+	if err != nil {
+		return err
+	}
+
+	// Parse the date string
+	_, err = time.Parse("2006/01/02 15:04", r.BookingDatetime)
+	if err != nil {
+		return errors.New("invalid date format for bookingDatetime")
+	}
+
+	return nil
 }

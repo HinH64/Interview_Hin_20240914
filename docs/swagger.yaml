@@ -1,4 +1,14 @@
 definitions:
+  enums.RoomStatus:
+    enum:
+    - available
+    - unavailable
+    - maintenance
+    type: string
+    x-enum-varnames:
+    - RoomStatusAvailable
+    - RoomStatusUnavailable
+    - RoomStatusMaintenance
   models.LevelRequest:
     properties:
       name:
@@ -11,6 +21,17 @@ definitions:
       name:
         type: string
     type: object
+  models.ReservationRequest:
+    properties:
+      bookingDatetime:
+        type: string
+      playerIds:
+        items:
+          type: string
+        type: array
+      roomId:
+        type: string
+    type: object
   models.Response:
     properties:
       data:
@@ -20,6 +41,15 @@ definitions:
         type: string
       success:
         type: boolean
+    type: object
+  models.RoomRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      status:
+        $ref: '#/definitions/enums.RoomStatus'
     type: object
 info:
   contact: {}
@@ -216,4 +246,193 @@ paths:
       summary: Update a player
       tags:
       - players
+  /reservations:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of reservations with optional filters
+      parameters:
+      - description: Room ID
+        in: query
+        name: room_id
+        type: string
+      - description: Date (YYYY-MM-DD)
+        in: query
+        name: date
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: List reservations
+      tags:
+      - reservations
+    post:
+      consumes:
+      - application/json
+      description: Create a new reservation with the input payload
+      parameters:
+      - description: Create reservation
+        in: body
+        name: reservation
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReservationRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create a new reservation
+      tags:
+      - reservations
+  /rooms:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all rooms with pagination
+      parameters:
+      - description: Switch page by 'page'
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: List all rooms
+      tags:
+      - rooms
+    post:
+      consumes:
+      - application/json
+      description: Create a new room with the input payload
+      parameters:
+      - description: Create room
+        in: body
+        name: room
+        required: true
+        schema:
+          $ref: '#/definitions/models.RoomRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create a new room
+      tags:
+      - rooms
+  /rooms/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a room by ID
+      parameters:
+      - description: Room ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Delete a room
+      tags:
+      - rooms
+    get:
+      consumes:
+      - application/json
+      description: Get a room by ID
+      parameters:
+      - description: Room ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Get a room
+      tags:
+      - rooms
+    put:
+      consumes:
+      - application/json
+      description: updates a room by id
+      parameters:
+      - description: Room ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Room Request
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.RoomRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Update a room
+      tags:
+      - rooms
 swagger: "2.0"
