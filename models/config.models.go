@@ -10,6 +10,7 @@ type EnvConfig struct {
 	ServerAddr      string `mapstructure:"SERVER_ADDR"`
 	MongodbUri      string `mapstructure:"MONGO_URI"`
 	MongodbDatabase string `mapstructure:"MONGO_DATABASE"`
+	MongodbTestDatabase string `mapstructure:"MONGO_TEST_DATABASE"`
 	Mode            string `mapstructure:"MODE"`
 }
 
@@ -19,6 +20,7 @@ func (config *EnvConfig) Validate() error {
 		validation.Field(&config.ServerAddr, validation.Required),
 		validation.Field(&config.MongodbUri, validation.Required),
 		validation.Field(&config.MongodbDatabase, validation.Required),
+		validation.Field(&config.MongodbTestDatabase, validation.Required),
 		validation.Field(&config.Mode, validation.In("debug", "release")),
 	)
 }
