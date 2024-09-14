@@ -15,6 +15,261 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/challengegames": {
+            "get": {
+                "description": "Get a list of all challenge games",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "challengegames"
+                ],
+                "summary": "List all challenge games",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new challenge game with the given details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "challengegames"
+                ],
+                "summary": "Create a new challenge game",
+                "parameters": [
+                    {
+                        "description": "Create challenge game",
+                        "name": "challengegame",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateChallengeGameRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/challengegames/{id}": {
+            "get": {
+                "description": "Get details of a specific challenge game",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "challengegames"
+                ],
+                "summary": "Get a challenge game by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Challenge Game ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update details of a specific challenge game",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "challengegames"
+                ],
+                "summary": "Update a challenge game",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Challenge Game ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update challenge game",
+                        "name": "challengegame",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateChallengeGameRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a specific challenge game",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "challengegames"
+                ],
+                "summary": "Delete a challenge game",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Challenge Game ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/challenges": {
+            "post": {
+                "description": "Player joins a challenge with a fixed payment amount",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "challenges"
+                ],
+                "summary": "Join a challenge",
+                "parameters": [
+                    {
+                        "description": "Join challenge",
+                        "name": "challenge",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ChallengeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/challenges/results": {
+            "get": {
+                "description": "Get the most recent challenge result for a player",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "challenges"
+                ],
+                "summary": "Get last challenge result",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/levels": {
             "get": {
                 "description": "Get a list of all levels with pagination",
@@ -609,6 +864,41 @@ const docTemplate = `{
                 "RoomStatusMaintenance"
             ]
         },
+        "models.ChallengeRequest": {
+            "type": "object",
+            "properties": {
+                "playerId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CreateChallengeGameRequest": {
+            "type": "object",
+            "required": [
+                "addWinProbability",
+                "challengeCost",
+                "challengeTimeCostSec",
+                "challengeTimeDurationSec",
+                "winProbability"
+            ],
+            "properties": {
+                "addWinProbability": {
+                    "type": "number"
+                },
+                "challengeCost": {
+                    "type": "number"
+                },
+                "challengeTimeCostSec": {
+                    "type": "integer"
+                },
+                "challengeTimeDurationSec": {
+                    "type": "integer"
+                },
+                "winProbability": {
+                    "type": "number"
+                }
+            }
+        },
         "models.LevelRequest": {
             "type": "object",
             "properties": {
@@ -619,7 +909,14 @@ const docTemplate = `{
         },
         "models.PlayerRequest": {
             "type": "object",
+            "required": [
+                "levelId",
+                "name"
+            ],
             "properties": {
+                "balance": {
+                    "type": "number"
+                },
                 "levelId": {
                     "type": "string"
                 },
@@ -671,6 +968,26 @@ const docTemplate = `{
                 },
                 "status": {
                     "$ref": "#/definitions/enums.RoomStatus"
+                }
+            }
+        },
+        "models.UpdateChallengeGameRequest": {
+            "type": "object",
+            "properties": {
+                "addWinProbability": {
+                    "type": "number"
+                },
+                "challengeCost": {
+                    "type": "number"
+                },
+                "challengeTimeCostSec": {
+                    "type": "integer"
+                },
+                "challengeTimeDurationSec": {
+                    "type": "integer"
+                },
+                "winProbability": {
+                    "type": "number"
                 }
             }
         }

@@ -21,6 +21,8 @@ func CreatePlayer(request models.PlayerRequest) (*db.Player, error) {
 	player := &db.Player{
 		Name:    request.Name,
 		LevelID: levelID,
+		Balance: request.Balance,
+		ChallengeCount: 0,
 	}
 	err = CheckLevelExist(player.LevelID)
 	if err != nil {
@@ -65,18 +67,26 @@ func GetPlayers(page int, limit int) ([]db.GetPlayer, error) {
 	return players, nil
 }
 
-func GetPlayerByID(id string) (*db.GetPlayer, error) {
-	var player db.GetPlayer
-	err := mgm.Coll(&player).FindByID(id, &player)
-	if err != nil {
-		return nil, err
-	}
-	level := &db.Level{}
-    err = mgm.Coll(level).FindByID(player.LevelID, level)
-    if err == nil {
-        player.LevelName = level.Name
+func GetPlayerByID(id primitive.ObjectID) (*db.GetPlayer, error) {
+    var player db.Player
+    err := mgm.Coll(&player).FindByID(id, &player)
+    if err != nil {
+        return nil, err
     }
-	return &player, nil
+	var getPlayer db.GetPlayer
+	getPlayer.ID = player.ID
+	getPlayer.Name = player.Name
+	getPlayer.LevelID = player.LevelID
+	getPlayer.Balance = player.Balance
+	getPlayer.ChallengeCount = player.ChallengeCount
+
+	level := &db.Level{}
+	err = mgm.Coll(level).FindByID(player.LevelID, level)
+	if err == nil {
+		getPlayer.LevelName = level.Name
+	}
+
+    return &getPlayer, nil
 }
 
 func UpdatePlayer(playerId primitive.ObjectID, request *models.PlayerRequest) error {
@@ -91,6 +101,7 @@ func UpdatePlayer(playerId primitive.ObjectID, request *models.PlayerRequest) er
 	if err != nil {
 		return errors.New("invalid levelId")
 	}
+	player.Balance = request.Balance
 
 	err = CheckLevelExist(player.LevelID)
 	if err != nil {
@@ -106,8 +117,8 @@ func UpdatePlayer(playerId primitive.ObjectID, request *models.PlayerRequest) er
 	return nil
 }
 
-func DeletePlayer(id string) error {
-	player, err := GetPlayerByID(id)
+func DeletePlayer(playerId primitive.ObjectID) error {
+	player, err := GetPlayerByID(playerId)
 	if err != nil {
 		return err
 	}

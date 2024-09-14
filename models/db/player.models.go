@@ -14,6 +14,8 @@ type Player struct {
 	Name string `json:"name" bson:"name" example:"John Doe"`
 	// LevelID references the Level document
 	LevelID primitive.ObjectID `json:"levelId" bson:"levelId" example:"5f5e7e9b9b9b9b9b9b9b9b9b"`
+	ChallengeCount int `json:"challengeCount" bson:"challengeCount" default:"0"`
+	Balance float64 `json:"balance" bson:"balance" default:"1000"`
 }
 
 type GetPlayer struct {
@@ -24,4 +26,6 @@ type GetPlayer struct {
 	// LevelID references the Level document
 	LevelID primitive.ObjectID `json:"levelId" bson:"levelId" example:"5f5e7e9b9b9b9b9b9b9b9b9b"`
 	LevelName string            `json:"levelName" bson:"-"`
+	ChallengeCount int `json:"challengeCount" bson:"challengeCount" default:"0"`
+	Balance float64 `json:"balance" bson:"balance" default:"1000"`
 }

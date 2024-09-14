@@ -100,8 +100,9 @@ func CreatePlayer(c *gin.Context) {
 // @Failure 404 {object} models.Response
 // @Router /players/{id} [get]
 func GetPlayer(c *gin.Context) {
-	id := c.Param("id")
-	player, err := services.GetPlayerByID(id)
+	idHex := c.Param("id")
+	playerId, _ := primitive.ObjectIDFromHex(idHex)
+	player, err := services.GetPlayerByID(playerId)
 	if err != nil {
 		models.SendErrorResponse(c, http.StatusNotFound, "Player not found")
 		return
@@ -155,8 +156,9 @@ func UpdatePlayer(c *gin.Context) {
 // @Failure 404 {object} models.Response
 // @Router /players/{id} [delete]
 func DeletePlayer(c *gin.Context) {
-	id := c.Param("id")
-	err := services.DeletePlayer(id)
+	idHex := c.Param("id")
+	playerId, _ := primitive.ObjectIDFromHex(idHex)
+	err := services.DeletePlayer(playerId)
 	if err != nil {
 		models.SendErrorResponse(c, http.StatusNotFound, "Player not found")
 		return

@@ -26,8 +26,9 @@ func (a LevelRequest) Validate() error {
 }
 
 type PlayerRequest struct {
-	Name    string `json:"name"`
-	LevelID string `json:"levelId"`
+	Name    string  `json:"name" binding:"required"`
+	LevelID string  `json:"levelId" binding:"required"`
+	Balance float64 `json:"balance"`
 }
 
 func (p PlayerRequest) Validate() error {
@@ -73,4 +74,30 @@ func (r ReservationRequest) Validate() error {
 	}
 
 	return nil
+}
+
+type ChallengeRequest struct {
+	PlayerID string `json:"playerId"`
+}
+
+func (c ChallengeRequest) Validate() error {
+	return validation.ValidateStruct(&c,
+		validation.Field(&c.PlayerID, validation.Required, is.MongoID),
+	)
+}
+
+type CreateChallengeGameRequest struct {
+	ChallengeTimeDurationSec int     `json:"challengeTimeDurationSec" binding:"required"`
+	ChallengeTimeCostSec int     `json:"challengeTimeCostSec" binding:"required"`
+	ChallengeCost        float64 `json:"challengeCost" binding:"required"`
+	WinProbability       float64 `json:"winProbability" binding:"required"`
+	AddWinProbability    float64 `json:"addWinProbability" binding:"required"`
+}
+
+type UpdateChallengeGameRequest struct {
+	ChallengeTimeDurationSec *int     `json:"challengeTimeDurationSec,omitempty"`
+	ChallengeTimeCostSec *int     `json:"challengeTimeCostSec,omitempty"`
+	ChallengeCost        *float64 `json:"challengeCost,omitempty"`
+	WinProbability       *float64 `json:"winProbability,omitempty"`
+	AddWinProbability    *float64 `json:"addWinProbability,omitempty"`
 }
