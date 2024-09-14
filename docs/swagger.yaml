@@ -1,4 +1,16 @@
 definitions:
+  models.LevelRequest:
+    properties:
+      name:
+        type: string
+    type: object
+  models.PlayerRequest:
+    properties:
+      levelId:
+        type: string
+      name:
+        type: string
+    type: object
   models.Response:
     properties:
       data:
@@ -12,6 +24,55 @@ definitions:
 info:
   contact: {}
 paths:
+  /levels:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all levels with pagination
+      parameters:
+      - description: Switch page by 'page'
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: List all levels
+      tags:
+      - levels
+    post:
+      consumes:
+      - application/json
+      description: Create a new level with the input payload
+      parameters:
+      - description: Create level
+        in: body
+        name: level
+        required: true
+        schema:
+          $ref: '#/definitions/models.LevelRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create a new level
+      tags:
+      - levels
   /ping:
     get:
       consumes:
@@ -27,4 +88,132 @@ paths:
       summary: Ping
       tags:
       - ping
+  /players:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all players with pagination
+      parameters:
+      - description: Switch page by 'page'
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: List all players
+      tags:
+      - players
+    post:
+      consumes:
+      - application/json
+      description: Create a new player with the input payload
+      parameters:
+      - description: Create player
+        in: body
+        name: player
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create a new player
+      tags:
+      - players
+  /players/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a player by ID
+      parameters:
+      - description: Player ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Delete a player
+      tags:
+      - players
+    get:
+      consumes:
+      - application/json
+      description: Get a player by ID
+      parameters:
+      - description: Player ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Get a player
+      tags:
+      - players
+    put:
+      consumes:
+      - application/json
+      description: updates a player by id
+      parameters:
+      - description: Player ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Player Request
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Update a player
+      tags:
+      - players
 swagger: "2.0"

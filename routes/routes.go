@@ -24,6 +24,8 @@ func New() *gin.Engine {
 	v1 := r.Group("/v1")
 	{
 		PingRoute(v1)
+		PlayerRoute(v1)
+		LevelRoute(v1)
 	}
 
 	docs.SwaggerInfo.BasePath = v1.BasePath() // adds /v1 to swagger base path

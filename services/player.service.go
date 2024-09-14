@@ -1,0 +1,121 @@
+package services
+
+import (
+	"Interview_Hin_20240914/models"
+	db "Interview_Hin_20240914/models/db"
+	"errors"
+	"fmt"
+
+	"github.com/kamva/mgm/v3"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+func CreatePlayer(request models.PlayerRequest) (*db.Player, error) {
+	levelID, err := primitive.ObjectIDFromHex(request.LevelID)
+	if err != nil {
+		return nil, errors.New("invalid levelId")
+	}
+
+	player := &db.Player{
+		Name:    request.Name,
+		LevelID: levelID,
+	}
+	err = CheckLevelExist(player.LevelID)
+	if err != nil {
+		return nil, errors.New("cannot find level")
+	}
+
+	err = mgm.Coll(player).Create(player)
+	if err != nil {
+		return nil, errors.New("cannot create new player")
+	}
+
+	return player, nil
+}
+
+func GetPlayers(page int, limit int) ([]db.GetPlayer, error) {
+	var players []db.GetPlayer
+
+	if page < 0 {
+		page = 0
+	}
+
+	skip := page * limit
+
+	findOptions := options.Find().
+		SetSkip(int64(skip)).
+		SetLimit(int64(limit))
+
+	err := mgm.Coll(&db.Player{}).SimpleFind(&players, bson.M{}, findOptions)
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot find players: %w", err)
+	}
+
+	for i := range players {
+		level := &db.Level{}
+		err := mgm.Coll(level).FindByID(players[i].LevelID, level)
+		if err == nil {
+			players[i].LevelName = level.Name
+		}
+	}
+
+	return players, nil
+}
+
+func GetPlayerByID(id string) (*db.GetPlayer, error) {
+	var player db.GetPlayer
+	err := mgm.Coll(&player).FindByID(id, &player)
+	if err != nil {
+		return nil, err
+	}
+	level := &db.Level{}
+    err = mgm.Coll(level).FindByID(player.LevelID, level)
+    if err == nil {
+        player.LevelName = level.Name
+    }
+	return &player, nil
+}
+
+func UpdatePlayer(playerId primitive.ObjectID, request *models.PlayerRequest) error {
+	player := &db.Player{}
+	err := mgm.Coll(player).FindByID(playerId, player)
+	if err != nil {
+		return errors.New("cannot find player")
+	}
+
+	player.Name = request.Name
+	player.LevelID, err = primitive.ObjectIDFromHex(request.LevelID)
+	if err != nil {
+		return errors.New("invalid levelId")
+	}
+
+	err = CheckLevelExist(player.LevelID)
+	if err != nil {
+		return errors.New("cannot find level")
+	}
+
+	err = mgm.Coll(player).Update(player)
+
+	if err != nil {
+		return errors.New("cannot update")
+	}
+
+	return nil
+}
+
+func DeletePlayer(id string) error {
+	player, err := GetPlayerByID(id)
+	if err != nil {
+		return err
+	}
+
+	err = mgm.Coll(player).Delete(player)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
