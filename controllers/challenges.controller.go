@@ -35,7 +35,7 @@ func JoinChallenge(c *gin.Context) {
 		return
 	}
 
-	response.StatusCode = http.StatusOK
+	response.StatusCode = http.StatusCreated
 	response.Success = true
 	response.Data = gin.H{"challenge": result}
 	response.SendResponse(c)

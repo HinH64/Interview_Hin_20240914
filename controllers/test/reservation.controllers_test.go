@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"Interview_Hin_20240914/controllers"
+	"Interview_Hin_20240914/middlewares/validators"
 	"Interview_Hin_20240914/models"
 	db "Interview_Hin_20240914/models/db"
+	"Interview_Hin_20240914/services"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -22,13 +24,14 @@ import (
 func setupTestReservationsRouter() *gin.Engine {
 	r := gin.Default()
 	r.GET("/reservations", controllers.ListReservations)
-	r.POST("/reservations", controllers.CreateReservation)
+	r.POST("/reservations", validators.CreateReservationValidator(), controllers.CreateReservation)
 	return r
 }
 
 func TestListReservations(t *testing.T) {
 	// Setup test database connection
-	setupTestDB()
+	services.LoadConfig("../../.env")
+	services.InitMongoDBTest()
 
 	// Create test room
 	testRoom := &db.Room{Name: "Test Room", Status: "available"}
@@ -90,7 +93,8 @@ func TestListReservations(t *testing.T) {
 
 func TestCreateReservation(t *testing.T) {
 	// Setup test database connection
-	setupTestDB()
+	services.LoadConfig("../../.env")
+	services.InitMongoDBTest()
 
 	// Create test room
 	testRoom := &db.Room{Name: "Test Room", Status: "available"}

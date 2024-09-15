@@ -8,14 +8,19 @@ import (
 
 var Config *models.EnvConfig
 
-func LoadConfig() {
+func LoadConfig(configPath ...string) {
 	v := viper.New()
 	v.AutomaticEnv()
 	v.SetDefault("SERVER_PORT", "8080")
 	v.SetDefault("MODE", "debug")
 	v.SetConfigType("dotenv")
 	v.SetConfigName(".env")
-	v.AddConfigPath("./")
+
+	if len(configPath) > 0 {
+		v.SetConfigFile(configPath[0])
+	} else {
+		v.AddConfigPath("./")
+	}
 
 	if err := v.ReadInConfig(); err != nil {
 		panic(err)

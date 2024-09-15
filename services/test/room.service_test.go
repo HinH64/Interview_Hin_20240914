@@ -9,17 +9,12 @@ import (
 
 	"github.com/kamva/mgm/v3"
 	"github.com/stretchr/testify/assert"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
-func setupTestDB() {
-	err := mgm.SetDefaultConfig(nil, "testdb", options.Client().ApplyURI("mongodb+srv://Admin:DjHfIiOYzX5WGV2Q@cluster0.gvmek.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"))
-	if err != nil {
-		panic(err)
-	}
-}
+
 func TestCreateRoom(t *testing.T) {
 	// Setup test database connection
-	setupTestDB()
+	services.LoadConfig()
+	services.InitMongoDBTest()
 	
 	// Test case
 	request := models.RoomRequest{
@@ -42,7 +37,8 @@ func TestCreateRoom(t *testing.T) {
 
 func TestGetRooms(t *testing.T) {
 	// Setup test database connection
-	setupTestDB()
+	services.LoadConfig()
+	services.InitMongoDBTest()
 
 	// Create test rooms
 	room1 := &db.Room{Name: "Unit Test Room 1", Status: enums.RoomStatusAvailable}
@@ -79,7 +75,8 @@ func TestGetRooms(t *testing.T) {
 
 func TestGetRoom(t *testing.T) {
 	// Setup test database connection
-	setupTestDB()
+	services.LoadConfig()
+	services.InitMongoDBTest()
 
 	// Create test room
 	testRoom := &db.Room{Name: "Test Room", Status: enums.RoomStatusAvailable}
@@ -100,7 +97,8 @@ func TestGetRoom(t *testing.T) {
 
 func TestUpdateRoom(t *testing.T) {
 	// Setup test database connection
-	setupTestDB()
+	services.LoadConfig()
+	services.InitMongoDBTest()
 
 	// Create test room
 	testRoom := &db.Room{Name: "Test Room", Status: enums.RoomStatusAvailable}
@@ -128,7 +126,8 @@ func TestUpdateRoom(t *testing.T) {
 
 func TestDeleteRoom(t *testing.T) {
 	// Setup test database connection
-	setupTestDB()
+	services.LoadConfig()
+	services.InitMongoDBTest()
 
 	// Create test room
 	testRoom := &db.Room{Name: "Test Room", Status: enums.RoomStatusAvailable}

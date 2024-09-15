@@ -36,7 +36,7 @@ func CreatePayment(c *gin.Context) {
 		return
 	}
 
-	response.StatusCode = http.StatusOK
+	response.StatusCode = http.StatusCreated
 	response.Success = true
 	response.Data = gin.H{"payment": payment}
 	response.SendResponse(c)

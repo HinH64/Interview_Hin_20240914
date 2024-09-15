@@ -3,8 +3,10 @@ package controllers
 import (
 	"Interview_Hin_20240914/controllers"
 	"Interview_Hin_20240914/enums"
+	"Interview_Hin_20240914/middlewares/validators"
 	"Interview_Hin_20240914/models"
 	db "Interview_Hin_20240914/models/db"
+	"Interview_Hin_20240914/services"
 	"bytes"
 	"encoding/json"
 	"net/http"
@@ -19,16 +21,17 @@ import (
 func setupTestRoomRouter() *gin.Engine {
 	r := gin.Default()
 	r.GET("/rooms", controllers.ListRooms)
-	r.POST("/rooms", controllers.CreateRoom)
-	r.GET("/rooms/:id", controllers.GetRoom)
-	r.PUT("/rooms/:id", controllers.UpdateRoom)
-	r.DELETE("/rooms/:id", controllers.DeleteRoom)
+	r.POST("/rooms", validators.CreateRoomValidator(), controllers.CreateRoom)
+	r.GET("/rooms/:id", validators.PathIdValidator(), controllers.GetRoom)
+	r.PUT("/rooms/:id", validators.PathIdValidator(), validators.UpdateRoomValidator(), controllers.UpdateRoom)
+	r.DELETE("/rooms/:id", validators.PathIdValidator(), controllers.DeleteRoom)
 	return r
 }
 
 func TestListRooms(t *testing.T) {
 	// Setup test database connection
-	setupTestDB()
+	services.LoadConfig("../../.env")
+	services.InitMongoDBTest()
 
 	// Create test rooms
 	room1 := &db.Room{Name: "Room 1", Status: enums.RoomStatusAvailable}
@@ -62,7 +65,8 @@ func TestListRooms(t *testing.T) {
 
 func TestCreateRoom(t *testing.T) {
 	// Setup test database connection
-	setupTestDB()
+	services.LoadConfig("../../.env")
+	services.InitMongoDBTest()
 
 	// Setup router
 	router := setupTestRoomRouter()
@@ -104,7 +108,8 @@ func TestCreateRoom(t *testing.T) {
 
 func TestGetRoom(t *testing.T) {
 	// Setup test database connection
-	setupTestDB()
+	services.LoadConfig("../../.env")
+	services.InitMongoDBTest()
 
 	// Create test room
 	testRoom := &db.Room{Name: "Test Room", Status: enums.RoomStatusAvailable}
@@ -133,7 +138,8 @@ func TestGetRoom(t *testing.T) {
 
 func TestUpdateRoom(t *testing.T) {
 	// Setup test database connection
-	setupTestDB()
+	services.LoadConfig("../../.env")
+	services.InitMongoDBTest()
 
 	// Create test room
 	testRoom := &db.Room{Name: "Test Room", Status: enums.RoomStatusAvailable}
@@ -176,7 +182,8 @@ func TestUpdateRoom(t *testing.T) {
 
 func TestDeleteRoom(t *testing.T) {
 	// Setup test database connection
-	setupTestDB()
+	services.LoadConfig("../../.env")
+	services.InitMongoDBTest()
 
 	// Create test room
 	testRoom := &db.Room{Name: "Test Room", Status: enums.RoomStatusAvailable}

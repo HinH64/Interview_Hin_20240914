@@ -101,6 +101,7 @@ type UpdateChallengeGameRequest struct {
 	ChallengeCost        *float64 `json:"challengeCost,omitempty"`
 	WinProbability       *float64 `json:"winProbability,omitempty"`
 	AddWinProbability    *float64 `json:"addWinProbability,omitempty"`
+	TotalPrizeMoney    *float64 `json:"totalPrizeMoney,omitempty"`
 }
 
 type LogRequest struct {

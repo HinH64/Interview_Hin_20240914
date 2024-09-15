@@ -85,22 +85,26 @@ func JoinChallenge(playerID string) (*db.Challenge, error) {
 	}
 
 	// Update ChallengeGame's total prize money
-	_, err = mgm.Coll(&challengeGame).UpdateOne(
-		mgm.Ctx(),
-		bson.M{"_id": challengeGame.ID},
-		bson.M{"$inc": bson.M{"totalPrizeMoney": challengeGame.ChallengeCost}},
-	)
+	updateChallengeGameRequest := models.UpdateChallengeGameRequest{
+		TotalPrizeMoney: new(float64),
+	}
+	*updateChallengeGameRequest.TotalPrizeMoney = challengeGame.ChallengeCost + challengeGame.TotalPrizeMoney
+	_, err = UpdateChallengeGame(challengeGame.ID.Hex(), updateChallengeGameRequest)
+
 	if err != nil {
 		return nil, errors.New("failed to update challenge game's total prize money")
 	}
 
 	// Process the challenge result immediately
-	processChallengeResult(challenge, &challengeGame, player)
+	err = processChallengeResult(challenge, &challengeGame, player)
+	if err != nil {
+		return nil, errors.New("failed to process challenge result")
+	}
 
 	return challenge, nil
 }
 
-func processChallengeResult(challenge *db.Challenge, challengeGame *db.ChallengeGame, player *db.Player) {
+func processChallengeResult(challenge *db.Challenge, challengeGame *db.ChallengeGame, player *db.Player) error {
 	winProbability := challengeGame.WinProbability + (float64(player.ChallengeCount) * challengeGame.AddWinProbability)
 	randNum := rand.Float64() * 100
 
@@ -110,35 +114,39 @@ func processChallengeResult(challenge *db.Challenge, challengeGame *db.Challenge
 
 	if challenge.WinPrize {
 		// Update player's balance and reset challenge count
-		_, err := mgm.Coll(player).UpdateOne(
-			mgm.Ctx(),
-			bson.M{"_id": player.ID},
-			bson.M{
-				"$inc": bson.M{"balance": challengeGame.TotalPrizeMoney},
-				"$set": bson.M{"challengeCount": 0},
-			},
-		)
+		updatedBalance := player.Balance + challengeGame.TotalPrizeMoney
+		updatePlayerRequest := &models.PlayerRequest{
+			Name:           player.Name,
+			LevelID:        player.LevelID.Hex(),
+			Balance:        updatedBalance,
+			ChallengeCount: 0,
+		}
+
+		err := UpdatePlayer(player.ID, updatePlayerRequest)
 		if err != nil {
-			// Handle error (e.g., log it)
+			return err
 		}
 
 		// Reset ChallengeGame's total prize money
-		_, err = mgm.Coll(challengeGame).UpdateOne(
-			mgm.Ctx(),
-			bson.M{"_id": challengeGame.ID},
-			bson.M{"$set": bson.M{"totalPrizeMoney": 0}},
-		)
+		updateChallengeGameRequest := models.UpdateChallengeGameRequest{
+			TotalPrizeMoney: new(float64),
+		}
+		*updateChallengeGameRequest.TotalPrizeMoney = 0
+
+		_, err = UpdateChallengeGame(challengeGame.ID.Hex(), updateChallengeGameRequest)
 		if err != nil {
-			// Handle error (e.g., log it)
+			return err
 		}
 	}
 
 	// Update the challenge result
 	err := mgm.Coll(challenge).Update(challenge)
 	if err != nil {
-		// Handle error (e.g., log it)
+		return err
 	}
+	return nil
 }
+
 func GetLastChallenge() (*db.Challenge, error) {
 	var challenge db.Challenge
 	err := mgm.Coll(&db.Challenge{}).FindOne(
@@ -219,6 +227,9 @@ func UpdateChallengeGame(id string, request models.UpdateChallengeGameRequest) (
 	}
 	if request.AddWinProbability != nil {
 		game.AddWinProbability = *request.AddWinProbability
+	}
+	if request.TotalPrizeMoney != nil {
+		game.TotalPrizeMoney = *request.TotalPrizeMoney
 	}
 
 	err = mgm.Coll(game).Update(game)
