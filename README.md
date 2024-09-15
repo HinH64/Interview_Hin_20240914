@@ -52,43 +52,43 @@ Please refer to the Swagger documentation for the detailed API endpoints and the
 
 Player Management System
 -----------------
-GET /players - List all players
-POST /players - Create a new player
-GET /players/{id} - Get a specific player
-PUT /players/{id} - Update a player
-DELETE /players/{id} - Delete a player
+- `GET /players` - List all players
+- `POST /players` - Create a new player
+- `GET /players/{id}` - Get a specific player
+- `PUT /players/{id}` - Update a player
+- `DELETE /players/{id}` - Delete a player
 
-GET /levels - List all levels
-POST /levels - Create a new level
+- `GET /levels` - List all levels
+- `POST /levels` - Create a new level
 
 Challenge Game System
 -----------------
-GET /rooms - List all rooms
-POST /rooms - Create a new room
-GET /rooms/{id} - Get a specific room
-PUT /rooms/{id} - Update a room
-DELETE /rooms/{id} - Delete a room
+- `GET /rooms`  - List all rooms
+- `POST /rooms` - Create a new room
+- `GET /rooms/{id}` - Get a specific room
+- `PUT /rooms/{id}` - Update a room
+- `DELETE /rooms/{id}` - Delete a room
 
-GET /reservations - List all reservations
-POST /reservations - Create a new reservation
+- `GET /reservations` - List all reservations
+- `POST /reservations` - Create a new reservation
 
 Endless Challenge System
 -----------------
-GET /reservations - List all reservations
-POST /reservations - Create a new reservation
+- `GET /reservations` - List all reservations
+- `POST /reservations` - Create a new reservation
 
-GET /challengegames - List all challenge games
-POST /challengegames - Create a new challenge game
-GET /challengegames/{id} - Get a specific challenge game
-PUT /challengegames/{id} - Update a challenge game
-DELETE /challengegames/{id} - Delete a challenge game
+- `GET /challengegames` - List all challenge games
+- `POST /challengegames` - Create a new challenge game
+- `GET /challengegames/{id}` - Get a specific challenge game
+- `PUT /challengegames/{id}` - Update a challenge game
+- `DELETE /challengegames/{id}` - Delete a challenge game
 
 Game Log Collector
 -----------------
-GET /logs - List all logs
-POST /logs - Create a new log
+- `GET /logs` - List all logs
+- `POST /logs` - Create a new log
 
 Payment Processing System
 -----------------
-POST /payments - Create a new payment
-GET /payments/{id} - Get a specific payment
+- `POST /payments` - Create a new payment
+- `GET /payments/{id}` - Get a specific payment
