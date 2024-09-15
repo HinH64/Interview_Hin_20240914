@@ -55,7 +55,7 @@ func GetLevels(page int, limit int) ([]db.Level, error) {
 
 	findOptions := options.Find().
 		SetSkip(int64(skip)).
-		SetLimit(int64(limit))
+		SetLimit(int64(limit + 1))
 
 	err := mgm.Coll(&db.Level{}).SimpleFind(&levels, bson.M{}, findOptions)
 

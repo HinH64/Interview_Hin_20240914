@@ -31,7 +31,7 @@ func ListRooms(c *gin.Context) {
 
 	limit := 5 // You might want to make this configurable
 
-	rooms, err := services.GetRooms(page, limit+1) // Get one extra to check for next page
+	rooms, err := services.GetRooms(page, limit)
 	if err != nil {
 		models.SendErrorResponse(c, http.StatusInternalServerError, "Error fetching rooms")
 		return

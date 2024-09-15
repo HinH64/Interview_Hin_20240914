@@ -27,7 +27,7 @@ import (
 func ListReservations(c *gin.Context) {
 	roomID := c.Query("room_id")
 	dateStr := c.Query("date")
-	limitStr := c.DefaultQuery("limit", "10")
+	limitStr := c.DefaultQuery("limit", "5")
 	pageStr := c.DefaultQuery("page", "0")
 
 	limit, _ := strconv.Atoi(limitStr)
@@ -49,6 +49,11 @@ func ListReservations(c *gin.Context) {
 		return
 	}
 
+	hasNext := len(reservations) > limit
+	if hasNext {
+		reservations = reservations[:limit] // Remove the extra item
+	}
+
 	response := &models.Response{
 		StatusCode: http.StatusOK,
 		Success:    true,
@@ -56,6 +61,8 @@ func ListReservations(c *gin.Context) {
 			"reservations": reservations,
 			"page":         page,
 			"limit":        limit,
+			"hasNext":      hasNext,
+			"hasPrev":      page > 0,
 		},
 	}
 	response.SendResponse(c)

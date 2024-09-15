@@ -31,7 +31,7 @@ func ListPlayers(c *gin.Context) {
 
 	limit := 5 // You might want to make this configurable
 
-	players, err := services.GetPlayers(page, limit+1) // Get one extra to check for next page
+	players, err := services.GetPlayers(page, limit) 
 	if err != nil {
 		models.SendErrorResponse(c, http.StatusInternalServerError, "Error fetching players")
 		return

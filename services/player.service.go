@@ -48,7 +48,7 @@ func GetPlayers(page int, limit int) ([]db.GetPlayer, error) {
 
 	findOptions := options.Find().
 		SetSkip(int64(skip)).
-		SetLimit(int64(limit))
+		SetLimit(int64(limit + 1))
 
 	err := mgm.Coll(&db.Player{}).SimpleFind(&players, bson.M{}, findOptions)
 

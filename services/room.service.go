@@ -38,7 +38,7 @@ func GetRooms(page int, limit int) ([]db.Room, error) {
 
 	findOptions := options.Find().
 		SetSkip(int64(skip)).
-		SetLimit(int64(limit))
+		SetLimit(int64(limit + 1))
 
 	err := mgm.Coll(&db.Room{}).SimpleFind(&rooms, bson.M{}, findOptions)
 

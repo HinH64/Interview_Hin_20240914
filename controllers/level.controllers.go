@@ -30,7 +30,7 @@ func ListLevels(c *gin.Context) {
 
 	limit := 5 // You might want to make this configurable
 
-	levels, err := services.GetLevels(page, limit+1) // Get one extra to check for next page
+	levels, err := services.GetLevels(page, limit) // Get one extra to check for next page
 	if err != nil {
 		models.SendErrorResponse(c, http.StatusInternalServerError, "Error fetching levels")
 		return

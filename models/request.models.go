@@ -101,3 +101,22 @@ type UpdateChallengeGameRequest struct {
 	WinProbability       *float64 `json:"winProbability,omitempty"`
 	AddWinProbability    *float64 `json:"addWinProbability,omitempty"`
 }
+
+type LogRequest struct {
+	PlayerID string      `json:"playerId" binding:"required"`
+	Action   enums.LogAction `json:"action" binding:"required"`
+	Details  string      `json:"details"`
+}
+
+func (l LogRequest) Validate() error {
+	return validation.ValidateStruct(&l,
+		validation.Field(&l.PlayerID, validation.Required, is.MongoID),
+		validation.Field(&l.Action, validation.Required, validation.By(func(value interface{}) error {
+			if !value.(enums.LogAction).IsValid() {
+				return errors.New("invalid action")
+			}
+			return nil
+		})),
+		validation.Field(&l.Details, validation.Required),
+	)
+}

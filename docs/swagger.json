@@ -334,6 +334,105 @@
                 }
             }
         },
+        "/logs": {
+            "get": {
+                "description": "Get a list of logs with optional filters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "logs"
+                ],
+                "summary": "List logs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Player ID",
+                        "name": "playerId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Action type",
+                        "name": "action",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Start time (RFC3339 format)",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "End time (RFC3339 format)",
+                        "name": "end_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new log entry",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "logs"
+                ],
+                "summary": "Create a new log",
+                "parameters": [
+                    {
+                        "description": "Create log",
+                        "name": "log",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LogRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/ping": {
             "get": {
                 "description": "check server",
@@ -840,6 +939,27 @@
         }
     },
     "definitions": {
+        "enums.LogAction": {
+            "type": "string",
+            "enum": [
+                "register",
+                "login",
+                "logout",
+                "enter_room",
+                "exit_room",
+                "join_challenge",
+                "challenge_result"
+            ],
+            "x-enum-varnames": [
+                "LogActionRegister",
+                "LogActionLogin",
+                "LogActionLogout",
+                "LogActionEnterRoom",
+                "LogActionExitRoom",
+                "LogActionJoinChallenge",
+                "LogActionChallengeResult"
+            ]
+        },
         "enums.RoomStatus": {
             "type": "string",
             "enum": [
@@ -892,6 +1012,24 @@
             "type": "object",
             "properties": {
                 "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.LogRequest": {
+            "type": "object",
+            "required": [
+                "action",
+                "playerId"
+            ],
+            "properties": {
+                "action": {
+                    "$ref": "#/definitions/enums.LogAction"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "playerId": {
                     "type": "string"
                 }
             }

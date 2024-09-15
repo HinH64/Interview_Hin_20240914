@@ -1,4 +1,22 @@
 definitions:
+  enums.LogAction:
+    enum:
+    - register
+    - login
+    - logout
+    - enter_room
+    - exit_room
+    - join_challenge
+    - challenge_result
+    type: string
+    x-enum-varnames:
+    - LogActionRegister
+    - LogActionLogin
+    - LogActionLogout
+    - LogActionEnterRoom
+    - LogActionExitRoom
+    - LogActionJoinChallenge
+    - LogActionChallengeResult
   enums.RoomStatus:
     enum:
     - available
@@ -37,6 +55,18 @@ definitions:
     properties:
       name:
         type: string
+    type: object
+  models.LogRequest:
+    properties:
+      action:
+        $ref: '#/definitions/enums.LogAction'
+      details:
+        type: string
+      playerId:
+        type: string
+    required:
+    - action
+    - playerId
     type: object
   models.PlayerRequest:
     properties:
@@ -313,6 +343,71 @@ paths:
       summary: Create a new level
       tags:
       - levels
+  /logs:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of logs with optional filters
+      parameters:
+      - description: Player ID
+        in: query
+        name: playerId
+        type: string
+      - description: Action type
+        in: query
+        name: action
+        type: string
+      - description: Start time (RFC3339 format)
+        in: query
+        name: start_time
+        type: string
+      - description: End time (RFC3339 format)
+        in: query
+        name: end_time
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: List logs
+      tags:
+      - logs
+    post:
+      consumes:
+      - application/json
+      description: Create a new log entry
+      parameters:
+      - description: Create log
+        in: body
+        name: log
+        required: true
+        schema:
+          $ref: '#/definitions/models.LogRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create a new log
+      tags:
+      - logs
   /ping:
     get:
       consumes:

@@ -94,7 +94,7 @@ func GetReservations(roomID string, date *time.Time, page, limit int) ([]db.GetR
 
 	findOptions := options.Find().
 		SetSkip(int64(page * limit)).
-		SetLimit(int64(limit))
+		SetLimit(int64(limit + 1))
 
 	err := mgm.Coll(&db.Reservation{}).SimpleFind(&reservations, filter, findOptions)
 	if err != nil {
