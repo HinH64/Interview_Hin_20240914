@@ -444,6 +444,90 @@ const docTemplate = `{
                 }
             }
         },
+        "/payments": {
+            "post": {
+                "description": "Process a payment with the given details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Process a payment",
+                "parameters": [
+                    {
+                        "description": "Process payment",
+                        "name": "payment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PaymentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/payments/{id}": {
+            "get": {
+                "description": "Get details of a specific payment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Get payment details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Payment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/ping": {
             "get": {
                 "description": "check server",
@@ -971,6 +1055,21 @@ const docTemplate = `{
                 "LogActionChallengeResult"
             ]
         },
+        "enums.PaymentMethod": {
+            "type": "string",
+            "enum": [
+                "credit_card",
+                "bank_transfer",
+                "third_party",
+                "blockchain"
+            ],
+            "x-enum-varnames": [
+                "PaymentMethodCreditCard",
+                "PaymentMethodBankTransfer",
+                "PaymentMethodThirdParty",
+                "PaymentMethodBlockchain"
+            ]
+        },
         "enums.RoomStatus": {
             "type": "string",
             "enum": [
@@ -1045,6 +1144,25 @@ const docTemplate = `{
                 }
             }
         },
+        "models.PaymentRequest": {
+            "type": "object",
+            "required": [
+                "amount",
+                "paymentMethod",
+                "playerId"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "paymentMethod": {
+                    "$ref": "#/definitions/enums.PaymentMethod"
+                },
+                "playerId": {
+                    "type": "string"
+                }
+            }
+        },
         "models.PlayerRequest": {
             "type": "object",
             "required": [
@@ -1054,6 +1172,9 @@ const docTemplate = `{
             "properties": {
                 "balance": {
                     "type": "number"
+                },
+                "challengeCount": {
+                    "type": "integer"
                 },
                 "levelId": {
                     "type": "string"

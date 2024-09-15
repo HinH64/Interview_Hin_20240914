@@ -29,6 +29,7 @@ type PlayerRequest struct {
 	Name    string  `json:"name" binding:"required"`
 	LevelID string  `json:"levelId" binding:"required"`
 	Balance float64 `json:"balance"`
+	ChallengeCount int `json:"challengeCount"`
 }
 
 func (p PlayerRequest) Validate() error {
@@ -118,5 +119,24 @@ func (l LogRequest) Validate() error {
 			return nil
 		})),
 		validation.Field(&l.Details, validation.Required),
+	)
+}
+
+type PaymentRequest struct {
+	PlayerID      string              `json:"playerId" binding:"required"`
+	PaymentMethod enums.PaymentMethod `json:"paymentMethod" binding:"required"`
+	Amount        float64             `json:"amount" binding:"required"`
+}
+
+func (p PaymentRequest) Validate() error {
+	return validation.ValidateStruct(&p,
+		validation.Field(&p.PlayerID, validation.Required, is.MongoID),
+		validation.Field(&p.PaymentMethod, validation.Required, validation.By(func(value interface{}) error {
+			if !value.(enums.PaymentMethod).IsValid() {
+				return errors.New("invalid payment method")
+			}
+			return nil
+		})),
+		validation.Field(&p.Amount, validation.Required),
 	)
 }

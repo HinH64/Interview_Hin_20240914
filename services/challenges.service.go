@@ -68,17 +68,18 @@ func JoinChallenge(playerID string) (*db.Challenge, error) {
 		return nil, errors.New("cannot create new challenge")
 	}
 
+
 	// Update player's balance and challenge count
-	_, err = mgm.Coll(player).UpdateOne(
-		mgm.Ctx(),
-		bson.M{"_id": objectID},
-		bson.M{
-			"$inc": bson.M{
-				"balance":       -challengeGame.ChallengeCost,
-				"challengeCount": 1,
-			},
-		},
-	)
+	updatedBalance := player.Balance - challengeGame.ChallengeCost
+	updatedChallengeCount := player.ChallengeCount + 1
+	updateRequest := &models.PlayerRequest{
+		Name:           player.Name,
+		LevelID:        player.LevelID.Hex(),
+		Balance:        updatedBalance,
+		ChallengeCount: updatedChallengeCount,
+	}
+
+	err = UpdatePlayer(player.ID, updateRequest)
 	if err != nil {
 		return nil, errors.New("failed to update player's balance and challenge count")
 	}

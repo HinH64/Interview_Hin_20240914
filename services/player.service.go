@@ -102,6 +102,7 @@ func UpdatePlayer(playerId primitive.ObjectID, request *models.PlayerRequest) er
 		return errors.New("invalid levelId")
 	}
 	player.Balance = request.Balance
+	player.ChallengeCount = request.ChallengeCount
 
 	err = CheckLevelExist(player.LevelID)
 	if err != nil {

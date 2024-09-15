@@ -30,6 +30,7 @@ func New() *gin.Engine {
 		ReservationRoute(v1)
 		ChallengesRoute(v1)
 		LogRoute(v1)
+		PaymentRoute(v1)
 	}
 
 	docs.SwaggerInfo.BasePath = v1.BasePath() // adds /v1 to swagger base path

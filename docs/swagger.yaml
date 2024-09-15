@@ -17,6 +17,18 @@ definitions:
     - LogActionExitRoom
     - LogActionJoinChallenge
     - LogActionChallengeResult
+  enums.PaymentMethod:
+    enum:
+    - credit_card
+    - bank_transfer
+    - third_party
+    - blockchain
+    type: string
+    x-enum-varnames:
+    - PaymentMethodCreditCard
+    - PaymentMethodBankTransfer
+    - PaymentMethodThirdParty
+    - PaymentMethodBlockchain
   enums.RoomStatus:
     enum:
     - available
@@ -68,10 +80,25 @@ definitions:
     - action
     - playerId
     type: object
+  models.PaymentRequest:
+    properties:
+      amount:
+        type: number
+      paymentMethod:
+        $ref: '#/definitions/enums.PaymentMethod'
+      playerId:
+        type: string
+    required:
+    - amount
+    - paymentMethod
+    - playerId
+    type: object
   models.PlayerRequest:
     properties:
       balance:
         type: number
+      challengeCount:
+        type: integer
       levelId:
         type: string
       name:
@@ -408,6 +435,61 @@ paths:
       summary: Create a new log
       tags:
       - logs
+  /payments:
+    post:
+      consumes:
+      - application/json
+      description: Process a payment with the given details
+      parameters:
+      - description: Process payment
+        in: body
+        name: payment
+        required: true
+        schema:
+          $ref: '#/definitions/models.PaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Process a payment
+      tags:
+      - payments
+  /payments/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a specific payment
+      parameters:
+      - description: Payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Get payment details
+      tags:
+      - payments
   /ping:
     get:
       consumes:
